@@ -1,4 +1,3 @@
-<raw>
 # Project initializer for Foliant
 
 This CLI extension add `init` command that lets you create Foliant projects from templates.
@@ -75,4 +74,3 @@ There is a built-in template called "basic." It's used by default if you don' sp
 >   **Note**
 >
 >   More placeholders and built-in templates may be added in future versions.
-</raw>
