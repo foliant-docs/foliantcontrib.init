@@ -17,7 +17,7 @@ Create project from the default “basic” template:
 ```shell
 $ foliant init
 Enter the project name: Awesome Docs
-✔ Generating Foliant project
+v Generating Foliant project
 ─────────────────────
 Project "Awesome Docs" created in /path/to/awesome-docs
 ```
@@ -27,7 +27,7 @@ Create project from a custom template:
 ```shell
 $ foliant init --template /path/to/custom/template
 Enter the project name: Awesome Customized Docs
-✔ Generating Foliant project
+v Generating Foliant project
 ─────────────────────
 Project "Awesome Customized Docs" created in /path/to/awesome-customized-docs
 ```
@@ -36,7 +36,7 @@ You can provide the project name without user prompt:
 
 ```shell
 $ foliant init --name Awesome Docs
-✔ Generating Foliant project
+v Generating Foliant project
 ─────────────────────
 Project "Awesome Docs" created in /path/to/awesome-docs
 ```
