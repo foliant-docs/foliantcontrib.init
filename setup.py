@@ -21,7 +21,7 @@ def get_templates(path: Path) -> List[str]:
 
     for item in path.glob('**/*'):
         if item.is_file() and not item.name.startswith('_'):
-            result.append(item.relative_to(path.parent))
+            result.append(item.relative_to(path.parent).as_posix())
 
     return result
 
