@@ -1,4 +1,4 @@
-# Project initializer for Foliant
+# Project Initializer for Foliant
 
 This CLI extension add `init` command that lets you create Foliant projects from templates.
 
@@ -67,10 +67,6 @@ optional arguments:
 
 ## Project Templates
 
-A project template is a regular Foliant project, but with `title` value in `foliant.yml` replaced with the `{title}` placeholder. When the project is generated, the placeholder is replaced with the actual project name.
+A project template is a regular Foliant project but containing placeholders in files. When the project is generated, the placeholders are replaced with the values you provide. Currently, there are two placeholders: `{title}` and `{slug}`.
 
-There is a built-in template called "basic." It's used by default if you don' specify the template.
-
->   **Note**
->
->   More placeholders and built-in templates may be added in future versions.
+There is a built-in template called `basic`. It's used by default if no template is specified.
