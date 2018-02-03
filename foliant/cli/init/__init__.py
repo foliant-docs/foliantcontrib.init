@@ -2,7 +2,8 @@
 
 from pathlib import Path
 from shutil import copytree
-from typing import List
+from functools import reduce
+from typing import List, Dict
 
 from cliar import Cliar, set_help, set_arg_map, set_metavars
 from prompt_toolkit import prompt
@@ -32,6 +33,16 @@ class BuiltinTemplateValidator(Validator):
                 + f'Available templates are: {", ".join(self.builtin_templates)}.',
                 cursor_position=0
             )
+
+
+def replace_placeholders(path: Path, values: Dict[str, str]):
+    '''Replace placeholders in a file with the values from the mapping.'''
+
+    with open(path, encoding='utf8') as file:
+        file_content = file.read()
+
+    with open(path, 'w', encoding='utf8') as file:
+        file.write(file_content.format_map(values))
 
 
 class Cli(Cliar):
@@ -72,20 +83,30 @@ class Cli(Cliar):
         if not project_name:
             project_name = prompt('Enter the project name: ')
 
-        project_path = Path(slugify(project_name))
+        project_slug = slugify(project_name)
+
+        project_path = Path(project_slug)
+
+        values = {
+            'title': project_name,
+            'slug': project_slug
+        }
 
         result = None
 
         with spinner('Generating Foliant project', quiet):
             copytree(template_path, project_path)
 
-            foliant_yml_path = project_path / 'foliant.yml'
+            text_types = '*.md', '*.yml', '*.txt'
 
-            with open(foliant_yml_path, encoding='utf8') as foliant_yml:
-                foliant_yml_content = foliant_yml.read()
+            text_file_paths = reduce(
+                lambda acc, matches: acc + [*matches],
+                (project_path.rglob(text_type) for text_type in text_types),
+                []
+            )
 
-            with open(foliant_yml_path, 'w', encoding='utf8') as foliant_yml:
-                foliant_yml.write(foliant_yml_content.format(title=project_name))
+            for text_file_path in text_file_paths:
+                replace_placeholders(text_file_path, values)
 
             result = project_path.absolute()
 
