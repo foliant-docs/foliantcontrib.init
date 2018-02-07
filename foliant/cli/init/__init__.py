@@ -108,7 +108,7 @@ class Cli(Cliar):
             for text_file_path in text_file_paths:
                 replace_placeholders(text_file_path, values)
 
-            result = project_path.absolute()
+            result = project_path
 
         if result:
             if not quiet:
