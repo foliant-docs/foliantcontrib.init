@@ -1,4 +1,2 @@
-# List the required Foliant extensions and MkDocs themes here.
-#
-# For example, uncomment this line to enable macros:
-# foliantcontrib.macros
+# List the required Foliant backends and extensions, as well as other Python packages, e.g. MkDocs theme:
+foliantcontrib.mkdocs

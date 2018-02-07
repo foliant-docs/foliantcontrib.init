@@ -1,23 +1,19 @@
 #   {title}
 
-##  Build Locally
+##  Build Instructions
 
 With Docker Compose:
 
 ```bash
-$ git clone git@github.com:foliant-docs/foliant.git
-$ cd foliant/docs
 # Site:
-$ docker-compose run --rm foliant-docs make site
+$ docker-compose run --rm {slug} make site
 # PDF:
-$ docker-compose run --rm foliant-docs make pdf
+$ docker-compose run --rm {slug} make pdf
 ```
 
 With pip and stuff (requires Python 3.6+, Pandoc, and TeXLive):
 
 ```bash
-$ git clone git@github.com:foliant-docs/foliant.git
-$ cd foliant/docs
 $ pip install -r requirements
 # Site:
 $ foliant make site
