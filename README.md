@@ -19,7 +19,7 @@ $ foliant init
 Enter the project name: Awesome Docs
 ✔ Generating Foliant project
 ─────────────────────
-Project "Awesome Docs" created in /path/to/awesome-docs
+Project "Awesome Docs" created in awesome-docs
 ```
 
 Create project from a custom template:
@@ -29,7 +29,7 @@ $ foliant init --template /path/to/custom/template
 Enter the project name: Awesome Customized Docs
 ✔ Generating Foliant project
 ─────────────────────
-Project "Awesome Customized Docs" created in /path/to/awesome-customized-docs
+Project "Awesome Customized Docs" created in awesome-customized-docs
 ```
 
 You can provide the project name without user prompt:
@@ -38,14 +38,14 @@ You can provide the project name without user prompt:
 $ foliant init --name Awesome Docs
 ✔ Generating Foliant project
 ─────────────────────
-Project "Awesome Docs" created in /path/to/awesome-docs
+Project "Awesome Docs" created in awesome-docs
 ```
 
 Another useful option is `--quiet`, which hides all output except for the path to the generated project:
 
 ```shell
 $ foliant init --name Awesome Docs --quiet
-/path/to/awesome-docs
+awesome-docs
 ```
 
 To see all available options, run `foliant init --help`:
