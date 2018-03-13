@@ -14,7 +14,7 @@ $ docker-compose run --rm {slug} make pdf
 With pip and stuff (requires Python 3.6+, Pandoc, and TeXLive):
 
 ```bash
-$ pip install -r requirements.txt
+$ pip install -r requirements
 # Site:
 $ foliant make site
 # PDF:
