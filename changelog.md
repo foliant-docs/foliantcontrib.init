@@ -16,3 +16,8 @@
 -   Upon creation, relative path to the created project directory is returned instead of an absolute one.
 -   Templates: basic: Foliant docs related content removed from README.md.
 -   Templates: basic: `foliantcontrib.mkdocs` added to requirements.txt.
+
+
+# 1.0.4
+
+-   Update for Foliant 1.0.4: Pass logger to spinner.

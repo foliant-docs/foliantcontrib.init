@@ -94,7 +94,7 @@ class Cli(Cliar):
 
         result = None
 
-        with spinner('Generating Foliant project', quiet):
+        with spinner('Generating Foliant project', self.logger, quiet):
             copytree(template_path, project_path)
 
             text_types = '*.md', '*.yml', '*.txt'
