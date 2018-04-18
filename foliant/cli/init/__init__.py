@@ -1,11 +1,12 @@
-'''New project generator for Foliant doc buidler.'''
+'''Project generator for Foliant.'''
 
 from pathlib import Path
 from shutil import copytree
 from functools import reduce
+from logging import DEBUG, WARNING
 from typing import List, Dict
 
-from cliar import Cliar, set_help, set_arg_map, set_metavars
+from cliar import set_help, set_arg_map, set_metavars
 from prompt_toolkit import prompt
 from prompt_toolkit.contrib.completers import WordCompleter
 from prompt_toolkit.validation import Validator, ValidationError
@@ -13,6 +14,7 @@ from prompt_toolkit.validation import Validator, ValidationError
 from slugify import slugify
 
 from foliant.utils import spinner
+from foliant.cli.base import BaseCli
 
 
 class BuiltinTemplateValidator(Validator):
@@ -45,29 +47,42 @@ def replace_placeholders(path: Path, values: Dict[str, str]):
         file.write(file_content.format_map(values))
 
 
-class Cli(Cliar):
+class Cli(BaseCli):
     @set_arg_map({'project_name': 'name'})
     @set_metavars({'project_name': 'NAME', 'template': 'NAME or PATH'})
     @set_help(
         {
             'project_name': 'Name of the Foliant project',
             'template': 'Name of a built-in project template or path to custom one',
-            'quiet': 'Hide all output accept for the result. Useful for piping.'
+            'quiet': 'Hide all output accept for the result. Useful for piping.',
+            'debug': 'Log all events during project creation. If not set, only warnings and errors are logged.'
         }
     )
-    def init(self, project_name='', template='basic', quiet=False):
+    def init(self, project_name='', template='basic', quiet=False, debug=False):
         '''Generate new Foliant project.'''
+
+        self.logger.setLevel(DEBUG if debug else WARNING)
+
+        self.logger.info('Project creation started.')
+
+        self.logger.debug(f'Template: {template}')
 
         template_path = Path(template)
 
         if not template_path.exists():
+            self.logger.debug('Template not found, looking in builtin templates.')
+
             builtin_templates_path = Path(__file__).parent / 'templates'
 
             builtin_templates = [
                 item.name for item in builtin_templates_path.iterdir() if item.is_dir()
             ]
 
+            self.logger.debug(f'Available templates: {builtin_templates}')
+
             if template not in builtin_templates:
+                self.logger.debug('Builtin template not found, asking for user input.')
+
                 try:
                     template = prompt(
                         f'Please pick a template from {builtin_templates}: ',
@@ -76,9 +91,12 @@ class Cli(Cliar):
                     )
 
                 except KeyboardInterrupt:
+                    self.logger.warning('Project creation interrupted.')
                     return
 
             template_path = builtin_templates_path / template
+
+            self.logger.debug(f'Template path: {template_path}')
 
         if not project_name:
             project_name = prompt('Enter the project name: ')
@@ -94,7 +112,7 @@ class Cli(Cliar):
 
         result = None
 
-        with spinner('Generating Foliant project', self.logger, quiet):
+        with spinner('Generating project', self.logger, quiet):
             copytree(template_path, project_path)
 
             text_types = '*.md', '*.yml', '*.txt'
@@ -108,9 +126,14 @@ class Cli(Cliar):
             for text_file_path in text_file_paths:
                 replace_placeholders(text_file_path, values)
 
+            for item in project_path.rglob('*'):
+                item.rename(item.as_posix().format_map(values))
+
             result = project_path
 
         if result:
+            self.logger.info(f'Result: {result}')
+
             if not quiet:
                 print('─────────────────────')
                 print(f'Project "{project_name}" created in {result}')
@@ -118,4 +141,5 @@ class Cli(Cliar):
                 print(result)
 
         else:
+            self.logger.critical('Project creation failed.')
             exit(1)
