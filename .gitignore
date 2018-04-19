@@ -101,4 +101,4 @@ ENV/
 .mypy_cache/
 
 foliant/cli/init/templates/*
-!/foliant/config/basic.py
+!/foliant/cli/init/templates/base
