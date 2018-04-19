@@ -12,7 +12,7 @@ $ pip install foliantcontrib.init
 
 ## Usage
 
-Create project from the default “basic” template:
+Create project from the default “base” template:
 
 ```shell
 $ foliant init
@@ -69,4 +69,4 @@ optional arguments:
 
 A project template is a regular Foliant project but containing placeholders in files. When the project is generated, the placeholders are replaced with the values you provide. Currently, there are two placeholders: `$title` and `$slug`.
 
-There is a built-in template called `basic`. It's used by default if no template is specified.
+There is a built-in template called `base`. It's used by default if no template is specified.
