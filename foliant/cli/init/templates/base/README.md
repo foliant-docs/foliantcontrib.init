@@ -1,4 +1,4 @@
-#   {title}
+#   $title
 
 ##  Build Instructions
 
@@ -6,9 +6,9 @@ With Docker Compose:
 
 ```bash
 # Site:
-$ docker-compose run --rm {slug} make site
+$ docker-compose run --rm $slug make site
 # PDF:
-$ docker-compose run --rm {slug} make pdf
+$ docker-compose run --rm $slug make pdf
 ```
 
 With pip and stuff (requires Python 3.6+, Pandoc, and TeXLive):
