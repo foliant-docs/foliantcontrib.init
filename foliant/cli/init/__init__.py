@@ -37,14 +37,14 @@ class BuiltinTemplateValidator(Validator):
             )
 
 
-def replace_placeholders(path: Path, values: Dict[str, str]):
+def replace_placeholders(path: Path, properties: Dict[str, str]):
     '''Replace placeholders in a file with the values from the mapping.'''
 
     with open(path, encoding='utf8') as file:
         file_content = file.read()
 
     with open(path, 'w', encoding='utf8') as file:
-        file.write(file_content.format_map(values))
+        file.write(file_content.format_map(properties))
 
 
 class Cli(BaseCli):
@@ -70,45 +70,58 @@ class Cli(BaseCli):
         template_path = Path(template)
 
         if not template_path.exists():
-            self.logger.debug('Template not found, looking in builtin templates.')
+            self.logger.debug(
+                f'Template not found in {template_path}, looking in installed templates.'
+            )
 
-            builtin_templates_path = Path(__file__).parent / 'templates'
+            installed_templates_path = Path(Path(__file__).parent / 'templates')
 
-            builtin_templates = [
-                item.name for item in builtin_templates_path.iterdir() if item.is_dir()
+            installed_templates = [
+                item.name for item in installed_templates_path.iterdir() if item.is_dir()
             ]
 
-            self.logger.debug(f'Available templates: {builtin_templates}')
+            self.logger.debug(f'Available templates: {installed_templates}')
 
-            if template not in builtin_templates:
-                self.logger.debug('Builtin template not found, asking for user input.')
+            if template in installed_templates:
+                self.logger.debug('Template found.')
+
+            else:
+                self.logger.debug('Template not found, asking for user input.')
 
                 try:
                     template = prompt(
-                        f'Please pick a template from {builtin_templates}: ',
-                        completer=WordCompleter(builtin_templates),
-                        validator=BuiltinTemplateValidator(builtin_templates)
+                        f'Please pick a template from {installed_templates}: ',
+                        completer=WordCompleter(installed_templates),
+                        validator=BuiltinTemplateValidator(installed_templates)
                     )
 
                 except KeyboardInterrupt:
                     self.logger.warning('Project creation interrupted.')
                     return
 
-            template_path = builtin_templates_path / template
+            template_path = installed_templates_path / template
 
             self.logger.debug(f'Template path: {template_path}')
 
         if not project_name:
-            project_name = prompt('Enter the project name: ')
+            self.logger.debug('Project name not specified, asking for user input.')
+
+            try:
+                project_name = prompt('Enter the project name: ')
+
+            except KeyboardInterrupt:
+                self.logger.warning('Project creation interrupted.')
+                return
 
         project_slug = slugify(project_name)
-
         project_path = Path(project_slug)
 
-        values = {
+        properties = {
             'title': project_name,
             'slug': project_slug
         }
+
+        self.logger.debug(f'Project properties: {properties}')
 
         result = None
 
@@ -124,10 +137,10 @@ class Cli(BaseCli):
             )
 
             for text_file_path in text_file_paths:
-                replace_placeholders(text_file_path, values)
+                replace_placeholders(text_file_path, properties)
 
             for item in project_path.rglob('*'):
-                item.rename(item.as_posix().format_map(values))
+                item.rename(item.as_posix().format_map(properties))
 
             result = project_path
 
