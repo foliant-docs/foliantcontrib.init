@@ -20,5 +20,6 @@
 
 # 1.0.4
 
+-   Replace placeholders in file and directory names.
 -   Update for Foliant 1.0.4: Pass logger to spinner.
 -   Require Foliant 1.0.4.
