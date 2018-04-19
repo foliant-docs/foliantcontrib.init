@@ -3,6 +3,7 @@
 from pathlib import Path
 from shutil import copytree
 from functools import reduce
+from string import Template
 from logging import DEBUG, WARNING
 from typing import List, Dict
 
@@ -41,10 +42,10 @@ def replace_placeholders(path: Path, properties: Dict[str, str]):
     '''Replace placeholders in a file with the values from the mapping.'''
 
     with open(path, encoding='utf8') as file:
-        file_content = file.read()
+        file_content = Template(file.read())
 
     with open(path, 'w', encoding='utf8') as file:
-        file.write(file_content.format_map(properties))
+        file.write(file_content.safe_substitute(properties))
 
 
 class Cli(BaseCli):
@@ -128,7 +129,7 @@ class Cli(BaseCli):
         with spinner('Generating project', self.logger, quiet):
             copytree(template_path, project_path)
 
-            text_types = '*.md', '*.yml', '*.txt'
+            text_types = '*.md', '*.yml', '*.txt', '*.py'
 
             text_file_paths = reduce(
                 lambda acc, matches: acc + [*matches],
@@ -137,10 +138,12 @@ class Cli(BaseCli):
             )
 
             for text_file_path in text_file_paths:
+                self.logger.debug(f'Processing content of {text_file_path}')
                 replace_placeholders(text_file_path, properties)
 
             for item in project_path.rglob('*'):
-                item.rename(item.as_posix().format_map(properties))
+                self.logger.debug(f'Processing name of {item}')
+                item.rename(Template(item.as_posix()).safe_substitute(properties))
 
             result = project_path
 
