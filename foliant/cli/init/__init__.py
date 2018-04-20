@@ -1,11 +1,13 @@
-'''New project generator for Foliant doc buidler.'''
+'''Project generator for Foliant.'''
 
 from pathlib import Path
 from shutil import copytree
 from functools import reduce
+from string import Template
+from logging import DEBUG, WARNING
 from typing import List, Dict
 
-from cliar import Cliar, set_help, set_arg_map, set_metavars
+from cliar import set_help, set_arg_map, set_metavars
 from prompt_toolkit import prompt
 from prompt_toolkit.contrib.completers import WordCompleter
 from prompt_toolkit.validation import Validator, ValidationError
@@ -13,6 +15,7 @@ from prompt_toolkit.validation import Validator, ValidationError
 from slugify import slugify
 
 from foliant.utils import spinner
+from foliant.cli.base import BaseCli
 
 
 class BuiltinTemplateValidator(Validator):
@@ -35,69 +38,98 @@ class BuiltinTemplateValidator(Validator):
             )
 
 
-def replace_placeholders(path: Path, values: Dict[str, str]):
+def replace_placeholders(path: Path, properties: Dict[str, str]):
     '''Replace placeholders in a file with the values from the mapping.'''
 
     with open(path, encoding='utf8') as file:
-        file_content = file.read()
+        file_content = Template(file.read())
 
     with open(path, 'w', encoding='utf8') as file:
-        file.write(file_content.format_map(values))
+        file.write(file_content.safe_substitute(properties))
 
 
-class Cli(Cliar):
+class Cli(BaseCli):
     @set_arg_map({'project_name': 'name'})
     @set_metavars({'project_name': 'NAME', 'template': 'NAME or PATH'})
     @set_help(
         {
             'project_name': 'Name of the Foliant project',
             'template': 'Name of a built-in project template or path to custom one',
-            'quiet': 'Hide all output accept for the result. Useful for piping.'
+            'quiet': 'Hide all output accept for the result. Useful for piping.',
+            'debug': 'Log all events during project creation. If not set, only warnings and errors are logged.'
         }
     )
-    def init(self, project_name='', template='basic', quiet=False):
+    def init(self, project_name='', template='base', quiet=False, debug=False):
         '''Generate new Foliant project.'''
+
+        self.logger.setLevel(DEBUG if debug else WARNING)
+
+        self.logger.info('Project creation started.')
+
+        self.logger.debug(f'Template: {template}')
 
         template_path = Path(template)
 
         if not template_path.exists():
-            builtin_templates_path = Path(__file__).parent / 'templates'
+            self.logger.debug(
+                f'Template not found in {template_path}, looking in installed templates.'
+            )
 
-            builtin_templates = [
-                item.name for item in builtin_templates_path.iterdir() if item.is_dir()
+            installed_templates_path = Path(Path(__file__).parent / 'templates')
+
+            installed_templates = [
+                item.name for item in installed_templates_path.iterdir() if item.is_dir()
             ]
 
-            if template not in builtin_templates:
+            self.logger.debug(f'Available templates: {installed_templates}')
+
+            if template in installed_templates:
+                self.logger.debug('Template found.')
+
+            else:
+                self.logger.debug('Template not found, asking for user input.')
+
                 try:
                     template = prompt(
-                        f'Please pick a template from {builtin_templates}: ',
-                        completer=WordCompleter(builtin_templates),
-                        validator=BuiltinTemplateValidator(builtin_templates)
+                        f'Please pick a template from {installed_templates}: ',
+                        completer=WordCompleter(installed_templates),
+                        validator=BuiltinTemplateValidator(installed_templates)
                     )
 
                 except KeyboardInterrupt:
+                    self.logger.warning('Project creation interrupted.')
                     return
 
-            template_path = builtin_templates_path / template
+            template_path = installed_templates_path / template
+
+            self.logger.debug(f'Template path: {template_path}')
 
         if not project_name:
-            project_name = prompt('Enter the project name: ')
+            self.logger.debug('Project name not specified, asking for user input.')
+
+            try:
+                project_name = prompt('Enter the project name: ')
+
+            except KeyboardInterrupt:
+                self.logger.warning('Project creation interrupted.')
+                return
 
         project_slug = slugify(project_name)
-
         project_path = Path(project_slug)
 
-        values = {
+        properties = {
             'title': project_name,
             'slug': project_slug
         }
 
+        self.logger.debug(f'Project properties: {properties}')
+
         result = None
 
-        with spinner('Generating Foliant project', quiet):
+        with spinner('Generating project', self.logger, quiet):
             copytree(template_path, project_path)
 
-            text_types = '*.md', '*.yml', '*.txt'
+            text_types = '*.md', '*.yml', '*.txt', '*.py'
 
             text_file_paths = reduce(
                 lambda acc, matches: acc + [*matches],
@@ -106,11 +138,18 @@ class Cli(Cliar):
             )
 
             for text_file_path in text_file_paths:
-                replace_placeholders(text_file_path, values)
+                self.logger.debug(f'Processing content of {text_file_path}')
+                replace_placeholders(text_file_path, properties)
+
+            for item in project_path.rglob('*'):
+                self.logger.debug(f'Processing name of {item}')
+                item.rename(Template(item.as_posix()).safe_substitute(properties))
 
             result = project_path
 
         if result:
+            self.logger.info(f'Result: {result}')
+
             if not quiet:
                 print('─────────────────────')
                 print(f'Project "{project_name}" created in {result}')
@@ -118,4 +157,5 @@ class Cli(Cliar):
                 print(result)
 
         else:
+            self.logger.critical('Project creation failed.')
             exit(1)
