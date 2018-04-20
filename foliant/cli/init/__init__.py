@@ -59,7 +59,7 @@ class Cli(BaseCli):
             'debug': 'Log all events during project creation. If not set, only warnings and errors are logged.'
         }
     )
-    def init(self, project_name='', template='basic', quiet=False, debug=False):
+    def init(self, project_name='', template='base', quiet=False, debug=False):
         '''Generate new Foliant project.'''
 
         self.logger.setLevel(DEBUG if debug else WARNING)
