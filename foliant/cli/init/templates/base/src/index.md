@@ -1,3 +1,3 @@
-# Welcome to Foliant
+# Welcome to $title
 
-Content goes here.
+Your content goes here.
