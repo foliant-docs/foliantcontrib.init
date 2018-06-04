@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "foliantcontrib.init"
+version = "1.0.4"
+description = "Create Foliant projects from templates."
+authors = ["Konstantin Molchanov <moigagoo@live.com>"]
+readme = "README.md"
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+foliant = "^1.0.5"
+python-slugify = "^1.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.5"
+pylint = "^1.9"
