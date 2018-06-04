@@ -9,7 +9,7 @@ from typing import List, Dict
 
 from cliar import set_help, set_arg_map, set_metavars
 from prompt_toolkit import prompt
-from prompt_toolkit.contrib.completers import WordCompleter
+from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.validation import Validator, ValidationError
 
 from slugify import slugify
