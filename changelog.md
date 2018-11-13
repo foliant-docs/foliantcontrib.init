@@ -1,4 +1,4 @@
-# 1.0.6
+# 1.0.6 (under development)
 
 -   Provide compatibility with Foliant 1.0.7.
 
