@@ -1,3 +1,7 @@
+# 1.0.6
+
+-   Provide compatibility with Foliant 1.0.7.
+
 # 1.0.5
 
 -   Require Foliant 1.0.5 with prompt_toolkit^2.0.0.

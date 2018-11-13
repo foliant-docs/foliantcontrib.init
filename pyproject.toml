@@ -8,7 +8,7 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-foliant = "^1.0.5"
+foliant = "^1.0.7"
 python-slugify = "^1.2"
 
 [tool.poetry.dev-dependencies]
