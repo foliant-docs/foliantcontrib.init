@@ -102,3 +102,5 @@ ENV/
 
 foliant/cli/init/templates/*
 !/foliant/cli/init/templates/base
+
+*.lock

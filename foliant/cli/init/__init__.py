@@ -55,11 +55,10 @@ class Cli(BaseCli):
         {
             'project_name': 'Name of the Foliant project',
             'template': 'Name of a built-in project template or path to custom one',
-            'quiet': 'Hide all output accept for the result. Useful for piping.',
             'debug': 'Log all events during project creation. If not set, only warnings and errors are logged.'
         }
     )
-    def init(self, project_name='', template='base', quiet=False, debug=False):
+    def init(self, project_name='', template='base', debug=False):
         '''Generate new Foliant project.'''
 
         self.logger.setLevel(DEBUG if debug else WARNING)
@@ -126,7 +125,7 @@ class Cli(BaseCli):
 
         result = None
 
-        with spinner('Generating project', self.logger, quiet):
+        with spinner('Generating project', self.logger, debug):
             copytree(template_path, project_path)
 
             text_types = '*.md', '*.yml', '*.txt', '*.py'
@@ -150,11 +149,8 @@ class Cli(BaseCli):
         if result:
             self.logger.info(f'Result: {result}')
 
-            if not quiet:
-                print('─────────────────────')
-                print(f'Project "{project_name}" created in {result}')
-            else:
-                print(result)
+            print('─' * 20)
+            print(f'Project "{project_name}" created in {result}')
 
         else:
             self.logger.critical('Project creation failed.')
