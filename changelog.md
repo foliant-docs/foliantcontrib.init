@@ -1,3 +1,8 @@
+# 1.0.8
+
+-   Add comment to Dockerfile with option to use Foliant full image.
+-   Remove slugs from docker-compose. Now the service is always named `foliant`.
+
 # 1.0.7
 
 -   Provide compatibility with Foliant 1.0.8.
