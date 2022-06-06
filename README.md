@@ -1,3 +1,5 @@
+[![](https://img.shields.io/pypi/v/foliantcontrib.init.svg)](https://pypi.org/project/foliantcontrib.init/) [![](https://img.shields.io/github/v/tag/foliant-docs/foliantcontrib.init.svg?label=GitHub)](https://github.com/foliant-docs/foliantcontrib.init)
+
 # Project Initializer for Foliant
 
 This CLI extension add `init` command that lets you create Foliant projects from templates.
