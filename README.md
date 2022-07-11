@@ -24,6 +24,7 @@ Enter the project name: Awesome Docs
 Project "Awesome Docs" created in awesome-docs
 ```
 
+You can use the git repository as a template. In this case, you must specify the url of the repository.
 Create project from a custom template:
 
 ```shell
