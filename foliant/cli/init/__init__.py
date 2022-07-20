@@ -63,6 +63,8 @@ class Cli(BaseCli):
     )
     def init(self, project_name='', template='base', quiet=False, debug=False):
         '''Generate new Foliant project.'''
+        
+        path_to_folder='./'
 
         self.logger.setLevel(DEBUG if debug else WARNING)
 
@@ -72,11 +74,15 @@ class Cli(BaseCli):
 
         if validators.url(template):
             Repo.clone_from(template, path_to_folder)
+            template = path_to_folder
+            print("**********path_to_folder - ", path_to_folder)
         else:
             self.logger.critical("Incorrect url address to the git repository.")
             exit(1)
 
         template_path = Path(template)
+        
+        print("************template path - ", template_path)
 
         if not template_path.exists():
             self.logger.debug(
@@ -155,7 +161,7 @@ class Cli(BaseCli):
 
             result = project_path
 
-            shutil.rmtree(template_path)
+            rmtree(path_to_folder)
 
         if result:
             self.logger.info(f'Result: {result}')
