@@ -1,5 +1,6 @@
 '''Project generator for Foliant.'''
 
+import validators
 from git import Repo
 from pathlib import Path
 from shutil import copytree, rmtree
