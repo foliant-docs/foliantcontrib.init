@@ -75,14 +75,7 @@ class Cli(BaseCli):
                 return
 
         project_slug = slugify(project_name)
-
-        print("DEBUG  project_slug", project_slug)
-
         project_path = Path(project_slug)
-
-        print("DEBUG  project_path", project_path)
-
-        print("DEBUG  template", template)
 
         properties = {
             'title': project_name,
@@ -103,25 +96,37 @@ class Cli(BaseCli):
 
         if validators.url(path_to_folder):
             Repo.clone_from(path_to_folder, project_path)
-            
-            print("DEBUG  project_path after clone - ", project_path.__str__())
-            
+                        
             rmtree("./"+project_path.__str__()+"/.git")
 
+            text_types = '*.md', '*.yml', '*.txt', '*.py'
+
+            text_file_paths = reduce(
+                lambda acc, matches: acc + [*matches],
+                (project_path.rglob(text_type) for text_type in text_types),
+                []
+            )
+
+            for text_file_path in text_file_paths:
+                self.logger.debug(f'Processing content of {text_file_path}')
+                replace_placeholders(text_file_path, properties)
+
+            for item in project_path.rglob('*'):
+                self.logger.debug(f'Processing name of {item}')
+                item.rename(Template(item.as_posix()).safe_substitute(properties))
+
             result = project_path
-            
+        
         else:
             self.logger.info("The path to the template is not a url, or incorrect url address to the git repository")
             
             template_path = Path(template)
                 
-            print("DEBUG  template path - ", template_path)
-
             if not template_path.exists():
                 self.logger.debug(
                     f'Template not found in {template_path}, looking in installed templates.'
                 )
-
+ 
                 installed_templates_path = Path(Path(__file__).parent / 'templates')
 
                 installed_templates = [
