@@ -19,7 +19,7 @@ from slugify import slugify
 
 from foliant.utils import spinner
 from foliant.cli.base import BaseCli
-
+import re
 
 class BuiltinTemplateValidator(Validator):
     '''Validator for the interactive template selection prompt.'''
@@ -41,25 +41,6 @@ class BuiltinTemplateValidator(Validator):
             )
 
 
-def replace_placeholders(path: Path, properties: Dict[str, str]):
-    '''Replace placeholders in a file with the values from the mapping.'''
-
-    with open(path, encoding='utf8') as file:
-        file_content = Template(file.read())
-
-    with open(path, 'w', encoding='utf8') as file:
-        file.write(file_content.safe_substitute(properties))
-    
-    # Replace the target string
-    textToSearch = "&title"
-    with open(path, 'r', encoding='utf8') as file :
-        filedata = file.read()
-
-    filedata = filedata.replace(textToSearch, properties['title'])
-
-    with open(path, 'w', encoding='utf8') as file:
-        file.write(filedata)
-
 class Cli(BaseCli):
     @set_arg_map({'project_name': 'name'})
     @set_metavars({'project_name': 'NAME', 'template': 'NAME, PATH or git-repo'})
@@ -71,9 +52,36 @@ class Cli(BaseCli):
             'debug': 'Log all events during project creation. If not set, only warnings and errors are logged.'
         }
     )
+    def substitute_yml_plugs(self, properties: Dict[str, str], filedata):
+        '''Substitute non-template (without $) plugs with properties' values in yml.'''
+        for key in properties:
+            regex = rf"(^ *{key}:.*?) (\w.*)$"
+            substitute = rf"\1 {properties[key]}"
+            self.logger.debug(f'substituting {properties[key]} for {key}')
+            filedata = re.sub(regex, substitute, filedata, 1, re.MULTILINE)
+        return filedata
+
+    def replace_placeholders(self, path: Path, properties: Dict[str, str]):
+        '''Replace placeholders in a file with the values from the mapping.'''
+
+        with open(path, encoding='utf8') as file:
+            file_content = Template(file.read())
+
+        with open(path, 'w', encoding='utf8') as file:
+            file.write(file_content.safe_substitute(properties))
+
+        with open(path, 'r', encoding='utf8') as file:
+            filedata = file.read()
+
+        if path.suffix == '.yml':
+            filedata = self.substitute_yml_plugs(properties, filedata)
+
+        with open(path, 'w', encoding='utf8') as file:
+            file.write(filedata)
+
     def init(self, project_name='', template='base', quiet=False, debug=False):
         '''Generate new Foliant project.'''
-        
+
         if not project_name:
             self.logger.debug('Project name not specified, asking for user input.')
 
@@ -95,9 +103,9 @@ class Cli(BaseCli):
         self.logger.debug(f'Project properties: {properties}')
 
         result = None
-       
+
         path_to_folder=template
-        
+
         self.logger.setLevel(DEBUG if debug else WARNING)
 
         self.logger.info('Project creation started.')
@@ -106,7 +114,7 @@ class Cli(BaseCli):
 
         if validators.url(path_to_folder):
             Repo.clone_from(path_to_folder, project_path)
-                        
+
             rmtree("./"+project_path.__str__()+"/.git")
 
             text_types = '*.md', '*.yml', '*.txt', '*.py'
@@ -119,24 +127,24 @@ class Cli(BaseCli):
 
             for text_file_path in text_file_paths:
                 self.logger.debug(f'Processing content of {text_file_path}')
-                replace_placeholders(text_file_path, properties)
+                self.replace_placeholders(text_file_path, properties)
 
             for item in project_path.rglob('*'):
                 self.logger.debug(f'Processing name of {item}')
                 item.rename(Template(item.as_posix()).safe_substitute(properties))
 
             result = project_path
-        
+
         else:
             self.logger.info("The path to the template is not a url, or incorrect url address to the git repository")
-            
+
             template_path = Path(template)
-                
+
             if not template_path.exists():
                 self.logger.debug(
                     f'Template not found in {template_path}, looking in installed templates.'
                 )
- 
+
                 installed_templates_path = Path(Path(__file__).parent / 'templates')
 
                 installed_templates = [
@@ -166,7 +174,7 @@ class Cli(BaseCli):
 
                 self.logger.debug(f'Template path: {template_path}')
 
-        
+
             with spinner('Generating project', self.logger, quiet, debug):
                 copytree(template_path, project_path)
 
@@ -180,7 +188,7 @@ class Cli(BaseCli):
 
                 for text_file_path in text_file_paths:
                     self.logger.debug(f'Processing content of {text_file_path}')
-                    replace_placeholders(text_file_path, properties)
+                    self.replace_placeholders(text_file_path, properties)
 
                 for item in project_path.rglob('*'):
                     self.logger.debug(f'Processing name of {item}')
@@ -188,7 +196,7 @@ class Cli(BaseCli):
 
                 result = project_path
 
-        
+
         if result:
             self.logger.info(f'Result: {result}')
 
