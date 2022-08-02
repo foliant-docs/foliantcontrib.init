@@ -1,7 +1,6 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 from pathlib import Path
 from typing import List
-from git import Repo
 
 SHORT_DESCRIPTION = 'Create Foliant projects from templates.'
 
