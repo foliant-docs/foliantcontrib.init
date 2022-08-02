@@ -1,4 +1,4 @@
-'''Project generator for Foliant.'''
+"""Project generator for Foliant."""
 
 import validators
 from git import Repo
@@ -21,15 +21,16 @@ from foliant.utils import spinner
 from foliant.cli.base import BaseCli
 import re
 
+
 class BuiltinTemplateValidator(Validator):
-    '''Validator for the interactive template selection prompt.'''
+    """Validator for the interactive template selection prompt."""
 
     def __init__(self, builtin_templates: List[str]):
         super().__init__()
         self.builtin_templates = builtin_templates
 
     def validate(self, document):
-        '''Check if the selected template exists.'''
+        """Check if the selected template exists."""
 
         template = document.text
 
@@ -53,7 +54,7 @@ class Cli(BaseCli):
         }
     )
     def substitute_yml_plugs(self, properties: Dict[str, str], filedata):
-        '''Substitute non-template (without $) plugs with properties' values in yml.'''
+        """Substitute non-template (without $) plugs with properties' values in yml."""
         for key in properties:
             regex = rf"(^ *{key}:.*?) (\w.*)$"
             substitute = rf"\1 {properties[key]}"
@@ -62,7 +63,7 @@ class Cli(BaseCli):
         return filedata
 
     def replace_placeholders(self, path: Path, properties: Dict[str, str]):
-        '''Replace placeholders in a file with the values from the mapping.'''
+        """Replace placeholders in a file with the values from the mapping."""
 
         with open(path, encoding='utf8') as file:
             file_content = Template(file.read())
@@ -80,7 +81,7 @@ class Cli(BaseCli):
             file.write(filedata)
 
     def init(self, project_name='', template='base', quiet=False, debug=False):
-        '''Generate new Foliant project.'''
+        """Generate a new Foliant project."""
 
         if not project_name:
             self.logger.debug('Project name not specified, asking for user input.')
@@ -104,7 +105,7 @@ class Cli(BaseCli):
 
         result = None
 
-        path_to_folder=template
+        path_to_folder = template
 
         self.logger.setLevel(DEBUG if debug else WARNING)
 
@@ -174,7 +175,6 @@ class Cli(BaseCli):
 
                 self.logger.debug(f'Template path: {template_path}')
 
-
             with spinner('Generating project', self.logger, quiet, debug):
                 copytree(template_path, project_path)
 
@@ -195,7 +195,6 @@ class Cli(BaseCli):
                     item.rename(Template(item.as_posix()).safe_substitute(properties))
 
                 result = project_path
-
 
         if result:
             self.logger.info(f'Result: {result}')

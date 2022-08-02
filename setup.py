@@ -11,11 +11,12 @@ try:
 except FileNotFoundError:
     LONG_DESCRIPTION = SHORT_DESCRIPTION
 
+
 def get_templates(path: Path) -> List[str]:
-    '''List all files in ``templates`` directory, including all subdirectories.
+    """List all files in ``templates`` directory, including all subdirectories.
 
     The resulting list contains UNIX-like relative paths starting with ``templates``.
-    '''
+    """
 
     result = []
 
@@ -24,6 +25,7 @@ def get_templates(path: Path) -> List[str]:
             result.append(item.relative_to(path.parent).as_posix())
 
     return result
+
 
 setup(
     name='foliantcontrib.init',
