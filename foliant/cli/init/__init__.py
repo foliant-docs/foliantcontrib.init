@@ -52,7 +52,7 @@ def replace_placeholders(path: Path, properties: Dict[str, str]):
 
 class Cli(BaseCli):
     @set_arg_map({'project_name': 'name'})
-    @set_metavars({'project_name': 'NAME', 'template': 'NAME or PATH'})
+    @set_metavars({'project_name': 'NAME', 'template': 'NAME, PATH or git-repo'})
     @set_help(
         {
             'project_name': 'Name of the Foliant project.',
