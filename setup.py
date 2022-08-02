@@ -41,7 +41,7 @@ setup(
     platforms='any',
     install_requires=[
         'foliant>=1.0.8',
-        'python-slugify'
+        'python-slugify',
         'validators',
         'gitpython'
     ],

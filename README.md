@@ -25,7 +25,7 @@ Project "Awesome Docs" created in awesome-docs
 ```
 
 You can use the git repository as a template. In this case, you must specify the url of the repository.
-Create project from a custom template:
+Create project from a custom local template:
 
 ```shell
 $ foliant init --template /path/to/custom/template
@@ -33,6 +33,12 @@ Enter the project name: Awesome Customized Docs
 ✔ Generating Foliant project
 ─────────────────────
 Project "Awesome Customized Docs" created in awesome-customized-docs
+```
+
+Example with git repository:
+
+```shell
+$ foliant init --template https://github.com/path/to/custom/template
 ```
 
 You can provide the project name without user prompt:

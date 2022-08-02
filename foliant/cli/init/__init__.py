@@ -2,6 +2,7 @@
 
 import validators
 from git import Repo
+
 from pathlib import Path
 from shutil import copytree, rmtree
 from functools import reduce
@@ -48,11 +49,20 @@ def replace_placeholders(path: Path, properties: Dict[str, str]):
 
     with open(path, 'w', encoding='utf8') as file:
         file.write(file_content.safe_substitute(properties))
+    
+    # Replace the target string
+    textToSearch = "&title"
+    with open(path, 'r', encoding='utf8') as file :
+        filedata = file.read()
 
+    filedata = filedata.replace(textToSearch, properties['title'])
+
+    with open(path, 'w', encoding='utf8') as file:
+        file.write(filedata)
 
 class Cli(BaseCli):
     @set_arg_map({'project_name': 'name'})
-    @set_metavars({'project_name': 'NAME', 'template': 'NAME, PATH or git-repo'})
+    @set_metavars({'project_name': 'NAME', 'template': 'NAME, PATH'})
     @set_help(
         {
             'project_name': 'Name of the Foliant project.',
