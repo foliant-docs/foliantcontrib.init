@@ -1,3 +1,7 @@
+# 1.0.9
+
+- Add template download from got repository
+
 # 1.0.8
 
 -   Add comment to Dockerfile with option to use Foliant full image.

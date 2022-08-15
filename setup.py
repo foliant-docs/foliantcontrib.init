@@ -32,7 +32,7 @@ setup(
     description=SHORT_DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
-    version='1.0.8',
+    version='1.0.9',
     author='Konstantin Molchanov',
     author_email='moigagoo@live.com',
     url='https://github.com/foliant-docs/foliantcontrib.init',
@@ -44,7 +44,8 @@ setup(
         'foliant>=1.0.8',
         'python-slugify',
         'validators',
-        'gitpython'
+        'gitpython',
+        'cliar'
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
