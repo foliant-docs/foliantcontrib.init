@@ -43,16 +43,7 @@ class BuiltinTemplateValidator(Validator):
 
 
 class Cli(BaseCli):
-    @set_arg_map({'project_name': 'name'})
-    @set_metavars({'project_name': 'NAME', 'template': 'NAME, PATH or git-repo'})
-    @set_help(
-        {
-            'project_name': 'Name of the Foliant project.',
-            'template': 'Name of a built-in project template or path to custom one.',
-            'quiet': 'Hide all output accept for the result. Useful for piping.',
-            'debug': 'Log all events during project creation. If not set, only warnings and errors are logged.'
-        }
-    )
+
     def substitute_yml_plugs(self, properties: Dict[str, str], filedata):
         """Substitute non-template (without $) plugs with properties' values in yml."""
         for key in properties:
@@ -80,6 +71,16 @@ class Cli(BaseCli):
         with open(path, 'w', encoding='utf8') as file:
             file.write(filedata)
 
+    @set_arg_map({'project_name': 'name'})
+    @set_metavars({'project_name': 'NAME', 'template': 'NAME, PATH or git-repo'})
+    @set_help(
+        {
+            'project_name': 'Name of the Foliant project.',
+            'template': 'Name of a built-in project template or path to custom one.',
+            'quiet': 'Hide all output accept for the result. Useful for piping.',
+            'debug': 'Log all events during project creation. If not set, only warnings and errors are logged.'
+        }
+    )
     def init(self, project_name='', template='base', quiet=False, debug=False):
         """Generate a new Foliant project."""
 
