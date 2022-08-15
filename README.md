@@ -14,7 +14,11 @@ $ pip install foliantcontrib.init
 
 ## Usage
 
-Create project from the default “base” template:
+You can create a project from the default _base_ template or from a custom template
+
+### Base template
+
+Create project from the default _base_ template:
 
 ```shell
 $ foliant init
@@ -24,8 +28,11 @@ Enter the project name: Awesome Docs
 Project "Awesome Docs" created in awesome-docs
 ```
 
-You can use the git repository as a template. In this case, you must specify the url of the repository.
-Create project from a custom local template:
+### Custom template
+
+You can load a custom template from a local path or from a git repo
+
+#### Custom template from a local path
 
 ```shell
 $ foliant init --template /path/to/custom/template
@@ -35,11 +42,17 @@ Enter the project name: Awesome Customized Docs
 Project "Awesome Customized Docs" created in awesome-customized-docs
 ```
 
-Example with git repository:
+#### Custom template from a git repository
+
 
 ```shell
 $ foliant init --template https://github.com/path/to/custom/template
+Enter the project name: Awesome Docs from git
+────────────────────
+Project "Awesome Docs from git" created in awesome-docs-from-git
 ```
+
+### Other options
 
 You can provide the project name without user prompt:
 
