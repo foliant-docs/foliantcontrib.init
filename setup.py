@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 from pathlib import Path
 from typing import List
 
@@ -11,11 +11,12 @@ try:
 except FileNotFoundError:
     LONG_DESCRIPTION = SHORT_DESCRIPTION
 
+
 def get_templates(path: Path) -> List[str]:
-    '''List all files in ``templates`` directory, including all subdirectories.
+    """List all files in ``templates`` directory, including all subdirectories.
 
     The resulting list contains UNIX-like relative paths starting with ``templates``.
-    '''
+    """
 
     result = []
 
@@ -25,12 +26,13 @@ def get_templates(path: Path) -> List[str]:
 
     return result
 
+
 setup(
     name='foliantcontrib.init',
     description=SHORT_DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
-    version='1.0.8',
+    version='1.0.9',
     author='Konstantin Molchanov',
     author_email='moigagoo@live.com',
     url='https://github.com/foliant-docs/foliantcontrib.init',
@@ -40,7 +42,10 @@ setup(
     platforms='any',
     install_requires=[
         'foliant>=1.0.8',
-        'python-slugify'
+        'python-slugify',
+        'validators',
+        'gitpython',
+        'cliar'
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
