@@ -1,3 +1,7 @@
+# 1.0.10
+
+- Add Makefile to the base template
+
 # 1.0.9
 
 - Add template download from got repository
